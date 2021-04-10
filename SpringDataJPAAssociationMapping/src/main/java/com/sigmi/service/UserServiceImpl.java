@@ -71,7 +71,7 @@ public class UserServiceImpl implements IUserService {
 		System.out.println(dto);
 		System.out.println(user);
 		
-		return urepo.save(user).getUid();
+		return urepo.save(user).getId();
 	}
 //----------------get all user details------------------------
 	@Override
@@ -115,7 +115,7 @@ public class UserServiceImpl implements IUserService {
 		//List<UserDTO> listudto=new ArrayList<UserDTO>();
 		//for (User user:listuser) {
 			UserDTO udto=new UserDTO();
-			udto.setUid(user.getUid());
+			udto.setId(user.getId());
 			udto.setFname(user.getFname());
 			udto.setLname(user.getLname());
 			udto.setPhone(user.getPhone());
@@ -148,15 +148,13 @@ public class UserServiceImpl implements IUserService {
 		     }
 		
 			udto.setAddress(listadto);
-		//listudto.add(udto);
-		//}
 		return udto;
 	}
 //-------------------------------update specific user details-----------------------------------
 	@Override
 	public String updateUser(UserDTO dto) throws Exception {
 		User user=null;
-		Optional<User> opt=urepo.findById(dto.getUid());
+		Optional<User> opt=urepo.findById(dto.getId());
 		if(opt.isPresent()) {
 			user=opt.get();
 		}
@@ -201,7 +199,7 @@ public class UserServiceImpl implements IUserService {
 
 	   User user1=urepo.save(user);
 		if(user1!=null) {
-			return "User with id "+user1.getUid()+" updated";
+			return "User with id "+user1.getId()+" updated";
 		}else {
 		return "Problem in record updation";
 		}

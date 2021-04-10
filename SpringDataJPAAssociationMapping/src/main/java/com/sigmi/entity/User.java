@@ -22,7 +22,7 @@ import lombok.Data;
 public class User{
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	private Integer uid;
+	private Integer id;
 	private String fname;
 	private String lname;
 	private Long phone;
@@ -32,13 +32,10 @@ public class User{
 	 private String password;
 
 	@OneToMany(targetEntity = Address.class,cascade = CascadeType.ALL,fetch = FetchType.EAGER)
-	@JoinColumn(name="user_id",referencedColumnName = "uid")
-	//@JoinColumn(name="user_type_id",referencedColumnName = "id")
+	@JoinColumn(name="user_id",referencedColumnName = "id")
 	private List<Address> address;
 	
 	@ManyToOne(targetEntity = UserType.class,cascade = CascadeType.PERSIST,fetch = FetchType.LAZY)
 	@JoinColumn(name="userTypeId",referencedColumnName = "id")
 	private UserType utype; 
-//	@JoinColumn(name="userTypeId",referencedColumnName = "id")
-//	private int usertypefk;
 }

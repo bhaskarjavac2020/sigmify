@@ -30,7 +30,7 @@ public class Address{
     private String state;
     private Integer pin;
     @ManyToOne(targetEntity = User.class,cascade = CascadeType.ALL,fetch = FetchType.LAZY)
-	@JoinColumn(name="user_Id",referencedColumnName = "uid")
+	@JoinColumn(name="user_Id",referencedColumnName = "id")
     private User user;
     @ManyToOne(targetEntity = AddressType.class,cascade = CascadeType.PERSIST,fetch = FetchType.EAGER)
 	@JoinColumn(name="addressTypeId",referencedColumnName = "id")

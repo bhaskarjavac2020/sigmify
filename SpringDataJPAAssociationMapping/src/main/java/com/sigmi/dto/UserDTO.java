@@ -11,7 +11,7 @@ import lombok.Data;
 @Data
 @Component
 public class UserDTO implements Serializable {
-	private Integer uid;
+	private Integer id;
 	  private String fname; 
 	  private String lname; 
 	  private Long phone; 

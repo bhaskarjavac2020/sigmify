@@ -1,24 +1,17 @@
 package com.sigmi.controller;
 
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
-import org.apache.catalina.connector.Response;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.sigmi.dto.AddressDTO;
@@ -48,16 +41,16 @@ public class UserController {
 	}
 	
 //--------------------------get all user by id----------------------------------------------------	
-@GetMapping("/get/{uid}")
-	public ResponseEntity<UserDTO>getOneUser(@PathVariable Integer uid){
-		UserDTO userdto=service.fetchUserById(uid);
+@GetMapping("/get/{id}")
+	public ResponseEntity<UserDTO>getOneUser(@PathVariable Integer id){
+		UserDTO userdto=service.fetchUserById(id);
 		return new ResponseEntity<UserDTO>(userdto,HttpStatus.OK);
 	}
 
 //--------------------------delete user by id----------------------------------------------------
-	@DeleteMapping("/delete/{uid}")
-	public ResponseEntity<String> deleteUser(@PathVariable Integer uid){
-		String response=service.deleteUser(uid);
+	@DeleteMapping("/delete/{id}")
+	public ResponseEntity<String> deleteUser(@PathVariable Integer id){
+		String response=service.deleteUser(id);
 		return new ResponseEntity<String>(response,HttpStatus.OK);
 	}
 //--------------------------update by id----------------------------------------------------	
