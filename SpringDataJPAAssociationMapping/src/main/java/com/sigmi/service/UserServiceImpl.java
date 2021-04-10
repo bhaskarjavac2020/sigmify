@@ -73,57 +73,32 @@ public class UserServiceImpl implements IUserService {
 		
 		return urepo.save(user).getUid();
 	}
-
+//----------------get all user details------------------------
 	@Override
 	public List<UserDTO> fetchAllUser() throws Exception {
 		List<UserDTO> listudto=new ArrayList<UserDTO>();
 		List<User> listuser =urepo.findAll();
-		for (User user:listuser) {
-			UserDTO udto=new UserDTO();
-			udto.setFname(user.getFname());
-			udto.setLname(user.getLname());
-			udto.setPhone(user.getPhone());
-			udto.setPassword(user.getPassword());
-			udto.setEmail(user.getEmail());
-			// convert and get photo address from byte array of photo content
-			udto.setPhotoadd(Base64.getEncoder().encodeToString(user.getPhoto()));
-		    // set the user type
-			UserTypeDTO uTdto= new UserTypeDTO();
-			uTdto.setName(user.getUtype().getName());
-			uTdto.setDescription(user.getUtype().getDescription());
-			udto.setUtype(uTdto);
-			//set the address
-			List<AddressDTO> listadto=new ArrayList<AddressDTO>();
-	          for (Address address : user.getAddress()) {
-				System.out.println(address);
-			}
-			for(Address add:user.getAddress()) {
-		    	 AddressDTO adto= new AddressDTO();
-		    	 adto.setAddress(add.getAddress());
-		    	 adto.setCityLocality(add.getCityLocality());
-		    	 adto.setDistrict(add.getDistrict());
-		    	 adto.setState(add.getState());
-		    	 adto.setPin(add.getPin());
-		    	 AddressTypeDTO aTdto = new AddressTypeDTO();
-		         System.out.println(add.getAtype().getName());
-		         System.out.println(add.getAtype());
-		    	 aTdto.setName(add.getAtype().getName());
-		    	 aTdto.setDescription(add.getAtype().getDescription());
-		    	 adto.setAtype(aTdto);
-		    	 listadto.add(adto);
-		     }
-			udto.setAddress(listadto);
-		listudto.add(udto);
+		for(User user:listuser) {
+			UserDTO dto= new UserDTO();
+			dto=convertUserToDto(user);
+			listudto.add(dto);
 		}
 		return listudto;
 	}
-
+// -------------------get specific user details---------------------------------
 	@Override
-	public User fetchUserById(Integer uid) {
-		// TODO Auto-generated method stub
-		return null;
+	public UserDTO fetchUserById(Integer uid) {
+		User user=null;
+		UserDTO dto=new UserDTO();
+		Optional<User> opt=urepo.findById(uid);
+		if(opt.isPresent()) {
+			user=opt.get();
+		}
+		if(user!=null)
+			dto=convertUserToDto(user);
+		return dto;
 	}
-
+//-------------------delete specific user---------------------------------------
 	@Override
 	public String deleteUser(Integer uid) {
 		if(urepo.existsById(uid)) {	
@@ -134,7 +109,50 @@ public class UserServiceImpl implements IUserService {
 		}
 		
 	}
-
+	//-----------------convert user obj to userdto obj------------------------------------
+	public UserDTO convertUserToDto(User user){
+		
+		//List<UserDTO> listudto=new ArrayList<UserDTO>();
+		//for (User user:listuser) {
+			UserDTO udto=new UserDTO();
+			udto.setUid(user.getUid());
+			udto.setFname(user.getFname());
+			udto.setLname(user.getLname());
+			udto.setPhone(user.getPhone());
+			udto.setPassword(user.getPassword());
+			udto.setEmail(user.getEmail());
+			// convert and get photo address from byte array of photo content
+			udto.setPhotoadd(Base64.getEncoder().encodeToString(user.getPhoto()));
+		    // set the user type
+			UserTypeDTO uTdto= new UserTypeDTO();
+			uTdto.setId(user.getUtype().getId());
+			uTdto.setName(user.getUtype().getName());
+			uTdto.setDescription(user.getUtype().getDescription());
+			udto.setUtype(uTdto);
+			//set the address
+			List<AddressDTO> listadto=new ArrayList<AddressDTO>();
+			for(Address add:user.getAddress()) {
+		    	 AddressDTO adto= new AddressDTO();
+		    	 adto.setAddress_id(add.getAddress_id());
+		    	 adto.setAddress(add.getAddress());
+		    	 adto.setCityLocality(add.getCityLocality());
+		    	 adto.setDistrict(add.getDistrict());
+		    	 adto.setState(add.getState());
+		    	 adto.setPin(add.getPin());
+		    	 AddressTypeDTO aTdto = new AddressTypeDTO();
+		    	 aTdto.setId(add.getAtype().getId());
+		    	 aTdto.setName(add.getAtype().getName());
+		    	 aTdto.setDescription(add.getAtype().getDescription());
+		    	 adto.setAtype(aTdto);
+		    	 listadto.add(adto);
+		     }
+		
+			udto.setAddress(listadto);
+		//listudto.add(udto);
+		//}
+		return udto;
+	}
+//-------------------------------update specific user details-----------------------------------
 	@Override
 	public String updateUser(UserDTO dto) throws Exception {
 		User user=null;
@@ -180,22 +198,7 @@ public class UserServiceImpl implements IUserService {
 		}
 		user.setAddress(addresslist);
 		//----------------------------------------------------------------------------------
-//		 BeanUtils.copyProperties(dto, user); 
-//		 List<Address> address=new ArrayList<Address>();
-//		 for(AddressDTO dto1:dto.getAddress()) {
-//		  Address add=new Address(); 
-//		  BeanUtils.copyProperties(dto1, add);
-//		  //add.setAddress_id(dto1.getAddress_id());
-//		  System.out.println("dto obj address id value"+dto1.getAddress_id());
-//		  address.add(add); 
-//		  }
-//		 InputStream is=new FileInputStream(dto.getPhotoadd());
-//			byte[] photocontent=new byte[is.available()];
-//			is.read(photocontent);
-//			user.setPhoto(photocontent);
-//		 user.setAddress(address);
-//	
-//		//save user using updated value
+
 	   User user1=urepo.save(user);
 		if(user1!=null) {
 			return "User with id "+user1.getUid()+" updated";

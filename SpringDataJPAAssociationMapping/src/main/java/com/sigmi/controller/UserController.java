@@ -43,40 +43,15 @@ public class UserController {
 	public ResponseEntity<List<UserDTO>> getAllUser(@RequestBody User user) throws Exception
 	{
 		List<UserDTO> userList=service.fetchAllUser();
-		return new ResponseEntity<List<UserDTO>>(userList,HttpStatus.OK);
+		return new ResponseEntity(userList,HttpStatus.OK);
 		
 	}
 	
 
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	@GetMapping("/get/{uid}")
-	public ResponseEntity<User>getOneUser(@PathVariable Integer uid){
-		User user=service.fetchUserById(uid);
-		return new ResponseEntity<User>(user,HttpStatus.OK);
+	public ResponseEntity<UserDTO>getOneUser(@PathVariable Integer uid){
+		UserDTO userdto=service.fetchUserById(uid);
+		return new ResponseEntity<UserDTO>(userdto,HttpStatus.OK);
 	}
 	@DeleteMapping("/delete/{uid}")
 	public ResponseEntity<String> deleteUser(@PathVariable Integer uid){

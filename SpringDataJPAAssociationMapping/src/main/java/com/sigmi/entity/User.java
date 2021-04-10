@@ -36,7 +36,7 @@ public class User{
 	//@JoinColumn(name="user_type_id",referencedColumnName = "id")
 	private List<Address> address;
 	
-	@ManyToOne(targetEntity = UserType.class,cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+	@ManyToOne(targetEntity = UserType.class,cascade = CascadeType.PERSIST,fetch = FetchType.LAZY)
 	@JoinColumn(name="userTypeId",referencedColumnName = "id")
 	private UserType utype; 
 //	@JoinColumn(name="userTypeId",referencedColumnName = "id")
