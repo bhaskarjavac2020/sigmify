@@ -16,12 +16,6 @@ public class UserType implements Serializable{
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Integer id;
-	//@Column(unique = true)
 	private String name;
 	private String description;
-//	@OneToMany(targetEntity = User.class,cascade = CascadeType.ALL,fetch = FetchType.EAGER)
-//	//@ManyToOne(targetEntity = User.class,cascade = CascadeType.ALL,fetch = FetchType.LAZY)
-//	@JoinColumn(name = "userTypeId",referencedColumnName = "id")
-//	private List<User> user;
-   //private User user;
 }

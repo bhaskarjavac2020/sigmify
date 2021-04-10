@@ -22,7 +22,4 @@ public class AddressType {
 private Integer id;
 private String name;
 private String description;
-//@OneToMany(targetEntity = Address.class,cascade = CascadeType.ALL,fetch = FetchType.EAGER)
-//@JoinColumn(name = "addressTypeId",referencedColumnName = "aid")
-//private List<Address> address;
 }

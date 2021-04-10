@@ -1,6 +1,5 @@
 package com.sigmi.controller;
 
-import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -24,7 +23,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.sigmi.dto.AddressDTO;
 import com.sigmi.dto.UserDTO;
-import com.sigmi.entity.Address;
 import com.sigmi.entity.User;
 import com.sigmi.service.IUserService;
 
@@ -39,25 +37,30 @@ public class UserController {
           Integer id=service.registreUser(dto);
 	   return new ResponseEntity<String>("User data saved with "+id,HttpStatus.OK);
    }
-@GetMapping("/getall")
+//--------------------------get all users----------------------------------------------------
+	
+	@GetMapping("/getall")
 	public ResponseEntity<List<UserDTO>> getAllUser(@RequestBody User user) throws Exception
 	{
 		List<UserDTO> userList=service.fetchAllUser();
-		return new ResponseEntity(userList,HttpStatus.OK);
+		return new ResponseEntity<List<UserDTO>>(userList,HttpStatus.OK);
 		
 	}
 	
-
-	@GetMapping("/get/{uid}")
+//--------------------------get all user by id----------------------------------------------------	
+@GetMapping("/get/{uid}")
 	public ResponseEntity<UserDTO>getOneUser(@PathVariable Integer uid){
 		UserDTO userdto=service.fetchUserById(uid);
 		return new ResponseEntity<UserDTO>(userdto,HttpStatus.OK);
 	}
+
+//--------------------------delete user by id----------------------------------------------------
 	@DeleteMapping("/delete/{uid}")
 	public ResponseEntity<String> deleteUser(@PathVariable Integer uid){
 		String response=service.deleteUser(uid);
 		return new ResponseEntity<String>(response,HttpStatus.OK);
 	}
+//--------------------------update by id----------------------------------------------------	
 	@PutMapping("/modify/{id}")
 	public ResponseEntity<String> updateUser(@PathVariable Integer id,
 			                                  @RequestBody UserDTO dto) throws Exception{
