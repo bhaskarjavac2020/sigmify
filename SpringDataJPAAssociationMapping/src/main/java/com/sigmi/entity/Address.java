@@ -32,7 +32,7 @@ public class Address{
     @ManyToOne(targetEntity = User.class,cascade = CascadeType.ALL,fetch = FetchType.LAZY)
 	@JoinColumn(name="user_Id",referencedColumnName = "uid")
     private User user;
-    @ManyToOne(targetEntity = AddressType.class,cascade = CascadeType.PERSIST,fetch = FetchType.EAGER)
+    @ManyToOne(targetEntity = AddressType.class,cascade = CascadeType.ALL,fetch = FetchType.EAGER)
 	@JoinColumn(name="addressTypeId",referencedColumnName = "id")
     private AddressType atype;
 }
