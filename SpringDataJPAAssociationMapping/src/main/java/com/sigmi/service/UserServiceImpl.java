@@ -46,8 +46,8 @@ public class UserServiceImpl implements IUserService {
 		user.setPhone(dto.getPhone());
 		user.setPhoto(photocontent);
 		user.setPassword(dto.getPassword());
-		if (dto.getUtype()!=null) {
-			usertype=utrepo.findByName(dto.getUtype().getName());
+		if (dto.getUdtype()!=null) {
+			usertype=utrepo.findByName(dto.getUdtype().getName());
 			
 				user.setUtype(usertype);
 			}
@@ -128,7 +128,7 @@ public class UserServiceImpl implements IUserService {
 			uTdto.setId(user.getUtype().getId());
 			uTdto.setName(user.getUtype().getName());
 			uTdto.setDescription(user.getUtype().getDescription());
-			udto.setUtype(uTdto);
+			udto.setUdtype(uTdto);
 			//set the address
 			List<AddressDTO> listadto=new ArrayList<AddressDTO>();
 			for(Address add:user.getAddress()) {
@@ -172,8 +172,8 @@ public class UserServiceImpl implements IUserService {
 		user.setPhone(dto.getPhone());
 		user.setPhoto(photocontent);
 		user.setPassword(dto.getPassword());
-		if (dto.getUtype()!=null) {
-			usertype=utrepo.findByName(dto.getUtype().getName());
+		if (dto.getUdtype()!=null) {
+			usertype=utrepo.findByName(dto.getUdtype().getName());
 			user.setUtype(usertype);
 			}
 		user.setUtype(usertype);

@@ -19,5 +19,5 @@ public class UserDTO implements Serializable {
 	  private String photoadd;
 	  private String password;
 	  private List<AddressDTO> address;
-	  private UserTypeDTO utype;
+	  private UserTypeDTO udtype;
 }
