@@ -19,6 +19,7 @@ import com.sigmi.entity.Address;
 import com.sigmi.entity.AddressType;
 import com.sigmi.entity.User;
 import com.sigmi.entity.UserType;
+import com.sigmi.repository.AddressRepository;
 import com.sigmi.repository.AddressTypeRepository;
 import com.sigmi.repository.UserRepository;
 import com.sigmi.repository.UserTypeRepository;
@@ -27,6 +28,8 @@ import com.sigmi.repository.UserTypeRepository;
 public class UserServiceImpl implements IUserService {
 	@Autowired
 	private UserRepository urepo;
+	@Autowired
+	private AddressRepository arepo;
 	@Autowired
 	private UserTypeRepository utrepo;
 	@Autowired
@@ -87,10 +90,10 @@ public class UserServiceImpl implements IUserService {
 	}
 // -------------------get specific user details---------------------------------
 	@Override
-	public UserDTO fetchUserById(Integer uid) {
+	public UserDTO fetchUserById(Integer id) {
 		User user=null;
 		UserDTO dto=new UserDTO();
-		Optional<User> opt=urepo.findById(uid);
+		Optional<User> opt=urepo.findById(id);
 		if(opt.isPresent()) {
 			user=opt.get();
 		}
@@ -100,14 +103,24 @@ public class UserServiceImpl implements IUserService {
 	}
 //-------------------delete specific user---------------------------------------
 	@Override
-	public String deleteUser(Integer uid) {
-		if(urepo.existsById(uid)) {	
-			   urepo.deleteById(uid);
-			return "User with given id "+uid+" removed";
+	public String deleteUser(Integer id) {
+		if(urepo.existsById(id)) {	
+			   urepo.deleteById(id);
+			return "User with given id "+id+" removed";
 		}else {
 			return "invalid userid";
 		}
 		
+	}
+//-------------------delete specific address---------------------------------------	
+	@Override
+	public String deleteAddress(Integer id) {
+		if(arepo.existsById(id)) {
+			arepo.deleteById(id);
+			return "Address with given id "+id+" removed";
+		}else {
+			return "invalid address id";
+		}
 	}
 	//-----------------convert user obj to userdto obj------------------------------------
 	public UserDTO convertUserToDto(User user){
@@ -176,7 +189,7 @@ public class UserServiceImpl implements IUserService {
 			usertype=utrepo.findByName(dto.getUdtype().getName());
 			user.setUtype(usertype);
 			}
-		user.setUtype(usertype);
+		//user.setUtype(usertype);
 		//set address for user
 		for (AddressDTO dto1 : dto.getAddress()) {
 			
@@ -205,5 +218,6 @@ public class UserServiceImpl implements IUserService {
 		}
 		//return null;
 	}
+	
 
 }

@@ -11,7 +11,8 @@ import javax.persistence.Table;
 import lombok.Data;
 @Data
 @Entity
-@Table(name = "user_type")
+//@Table(name = "user_type")
+@Table(name = "usertype")
 public class UserType implements Serializable{
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)

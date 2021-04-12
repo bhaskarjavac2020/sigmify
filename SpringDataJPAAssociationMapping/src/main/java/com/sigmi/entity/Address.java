@@ -18,7 +18,8 @@ import lombok.Data;
 
 @Data
 @Entity
-@Table(name = "Address_map")
+//@Table(name = "Address_map")
+@Table(name = "address")
 //@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Address{
 	@Id
@@ -29,7 +30,7 @@ public class Address{
     private String district;
     private String state;
     private Integer pin;
-    @ManyToOne(targetEntity = User.class,cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+    @ManyToOne(targetEntity = User.class,cascade = CascadeType.PERSIST,fetch = FetchType.LAZY)
 	@JoinColumn(name="user_Id",referencedColumnName = "id")
     private User user;
     @ManyToOne(targetEntity = AddressType.class,cascade = CascadeType.PERSIST,fetch = FetchType.EAGER)

@@ -17,7 +17,8 @@ import javax.persistence.Table;
 import lombok.Data;
 @Data
 @Entity
-@Table(name = "User_map")
+//@Table(name = "User_map")
+@Table(name = "users")
 //@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class User{
 	@Id

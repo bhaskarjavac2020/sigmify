@@ -10,6 +10,7 @@ public interface IUserService {
 	public List<UserDTO> fetchAllUser() throws Exception;
 	public UserDTO fetchUserById(Integer id);
 	public String deleteUser(Integer id);
+	public String deleteAddress(Integer id);
 	public String updateUser(UserDTO dto)throws Exception;
 
 }

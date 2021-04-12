@@ -53,8 +53,14 @@ public class UserController {
 		String response=service.deleteUser(id);
 		return new ResponseEntity<String>(response,HttpStatus.OK);
 	}
+//--------------------------delete address by id----------------------------------------------------
+     @DeleteMapping("/delete/address/{id}")
+	public ResponseEntity<String> deleteAddress(@PathVariable Integer id){
+	   String response=service.deleteAddress(id);
+	   return new ResponseEntity<String>(response,HttpStatus.OK);
+}
 //--------------------------update by id----------------------------------------------------	
-	@PutMapping("/modify/{id}")
+	@PutMapping("/modify")
 	public ResponseEntity<String> updateUser(@PathVariable Integer id,
 			                                  @RequestBody UserDTO dto) throws Exception{
 		for(AddressDTO dto1:dto.getAddress()) {

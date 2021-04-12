@@ -9,7 +9,8 @@ import javax.persistence.Table;
 import lombok.Data;
 @Data
 @Entity
-@Table(name = "address_type")
+//@Table(name = "address_type")
+@Table(name = "addresstype")
 public class AddressType {
 @Id
 @GeneratedValue(strategy = GenerationType.AUTO)
