@@ -8,10 +8,9 @@ import com.sigmi.entity.User;
 public interface IUserService {
 	public Integer registreUser(UserDTO dto)throws Exception;
 	public List<UserDTO> fetchAllUser() throws Exception;
-	public User fetchOneUserById(Integer id);
+	public UserDTO fetchUserById(Integer id);
 	public String deleteUser(Integer id);
 	public String deleteAddress(Integer id);
-	public Integer updateUser(UserDTO userDto)throws Exception;
-	public Integer updateAddress(UserDTO userdto);
+	public String updateUser(UserDTO dto)throws Exception;
 
 }

@@ -3,14 +3,12 @@ package com.sigmi.dto;
 import java.io.Serializable;
 
 import org.springframework.stereotype.Component;
-
-import lombok.Data;
-
 @Component
-public class AddressTypeDTO implements Serializable {
+public class DistrictDTO implements Serializable {
 	private Integer id;
 	private String name;
 	private String description;
+	private StateDTO statedto;
 	public Integer getId() {
 		return id;
 	}
@@ -29,5 +27,16 @@ public class AddressTypeDTO implements Serializable {
 	public void setDescription(String description) {
 		this.description = description;
 	}
-    	
+	public StateDTO getStatedto() {
+		return statedto;
+	}
+	public void setStatedto(StateDTO statedto) {
+		this.statedto = statedto;
+	}
+	@Override
+	public String toString() {
+		return "DistrictDTO [id=" + id + ", name=" + name + ", description=" + description + ", statedto=" + statedto
+				+ "]";
+	}
+	
 }

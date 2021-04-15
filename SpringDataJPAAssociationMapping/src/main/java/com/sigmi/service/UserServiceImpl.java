@@ -7,7 +7,6 @@ import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,93 +18,111 @@ import com.sigmi.entity.Address;
 import com.sigmi.entity.AddressType;
 import com.sigmi.entity.User;
 import com.sigmi.entity.UserType;
-import com.sigmi.repository.AddressRepository;
-import com.sigmi.repository.AddressTypeRepository;
-import com.sigmi.repository.UserRepository;
-import com.sigmi.repository.UserTypeRepository;
+import com.sigmi.repository.IAddressRepository;
+import com.sigmi.repository.IAddressTypeRepository;
+import com.sigmi.repository.IUserRepository;
+import com.sigmi.repository.IUserTypeRepository;
 
 @Service
 public class UserServiceImpl implements IUserService {
 	@Autowired
-	private UserRepository urepo;
+	private IUserRepository userRepo;
 	@Autowired
-	private AddressRepository arepo;
+	private IAddressRepository addressRepo;
 	@Autowired
-	private UserTypeRepository utrepo;
+	private IUserTypeRepository userTypeRepo;
 	@Autowired
-    private AddressTypeRepository adrepo;
+    private IAddressTypeRepository addressTypeRepo;
 	@Override
-	public Integer registreUser(UserDTO dto) throws Exception {
-		UserType usertype=null;
-		AddressType addtype=null;
-		List<Address> address=new ArrayList<Address>();
-		InputStream is=new FileInputStream(dto.getPhotoadd());
+	public Integer registreUser(UserDTO userDto) throws Exception {
+		UserType userType=null;
+		InputStream is=new FileInputStream(userDto.getPhotoadd());
 		byte[] photocontent=new byte[is.available()];
 		is.read(photocontent);
-		User user= new User();
-		user.setFname(dto.getFname());
-		user.setLname(dto.getLname());
-		user.setEmail(dto.getEmail());
-		user.setPhone(dto.getPhone());
-		user.setPhoto(photocontent);
-		user.setPassword(dto.getPassword());
-		if (dto.getUdtype()!=null) {
-			usertype=utrepo.findByName(dto.getUdtype().getName());
-			
-				user.setUtype(usertype);
+		User newUser= new User();
+		newUser.setFname(userDto.getFname());
+		newUser.setLname(userDto.getLname());
+		newUser.setEmail(userDto.getEmail());
+		newUser.setPhone(userDto.getPhone());
+		newUser.setPhoto(photocontent);
+		newUser.setPassword(userDto.getPassword());
+		if (userDto.getUdtype()!=null) {
+			userType=userTypeRepo.findByName(userDto.getUdtype().getName());
 			}
-		user.setUtype(usertype);
+		newUser.setUserType(userType);
 		//set address for user
-		for (AddressDTO dto1 : dto.getAddress()) {
-			Address add=new Address();
-			add.setAddress(dto1.getAddress());
-			add.setCityLocality(dto1.getCityLocality());
-			add.setDistrict(dto1.getDistrict());
-			add.setState(dto1.getState());
-			add.setPin(dto1.getPin());
-			if(dto1.getAtype()!=null) {
-				addtype=adrepo.findByName(dto1.getAtype().getName());
-				add.setAtype(addtype);
+		List<Address> listAddress=new ArrayList<Address>();
+		for (AddressDTO adrsDto : userDto.getAddressdto()) {
+			Address adrs=new Address();
+			adrs.setAddress(adrsDto.getAddress());
+			adrs.setCityLocality(adrsDto.getCityLocality());
+			adrs.setDistrict(adrsDto.getDistrict());
+			adrs.setState(adrsDto.getState());
+			adrs.setPin(adrsDto.getPin());
+			AddressType addtype=null;
+			if(adrsDto.getAtypedto()!=null) {
+				addtype=addressTypeRepo.findByName(adrsDto.getAtypedto().getName());
+				adrs.setAddressType(addtype);
 			}
-			add.setAtype(addtype);
-			address.add(add);
+			adrs.setAddressType(addtype);
+			listAddress.add(adrs);
 		}
-		user.setAddress(address);
-		System.out.println(dto);
-		System.out.println(user);
-		
-		return urepo.save(user).getId();
+		newUser.setAddressess(listAddress);
+		userRepo.save(newUser);
+		return newUser.getId();
 	}
 //----------------get all user details------------------------
 	@Override
 	public List<UserDTO> fetchAllUser() throws Exception {
-		List<UserDTO> listudto=new ArrayList<UserDTO>();
-		List<User> listuser =urepo.findAll();
-		for(User user:listuser) {
-			UserDTO dto= new UserDTO();
-			dto=convertUserToDto(user);
-			listudto.add(dto);
+		List<UserDTO> listUserDto=new ArrayList<UserDTO>();
+		List<User> listUser =userRepo.findAll();
+		for(User user:listUser) {
+			UserDTO userDto= new UserDTO();
+			userDto.setId(user.getId());
+			userDto.setFname(user.getFname());
+			userDto.setFname(user.getFname());
+			userDto.setLname(user.getLname());
+			userDto.setPhone(user.getPhone());
+			userDto.setPassword(user.getPassword());
+			userDto.setEmail(user.getEmail());
+			
+			//-------convert photo----------
+			userDto.setPhotoadd(Base64.getEncoder().encodeToString(user.getPhoto()));
+			
+			//----UserType-------
+			UserTypeDTO utdto=new UserTypeDTO();
+			utdto.setId(user.getUserType().getId());
+			utdto.setName(user.getUserType().getName());
+			utdto.setDescription(user.getUserType().getDescription());
+			userDto.setUdtype(utdto);
+			//-------Addressdto-----
+			List<AddressDTO> listAddressDto=new ArrayList();
+			for (Address adrs : user.getAddressess()) {
+				AddressDTO adrsDto=new AddressDTO();
+				//--------copy properties from address to addressdto
+				adrsDto.setId(adrs.getId());
+				adrsDto.setAddress(adrs.getAddress());
+				adrsDto.setCityLocality(adrs.getCityLocality());
+				adrsDto.setDistrict(adrs.getDistrict());
+				adrsDto.setPin(adrs.getPin());
+				adrsDto.setUserDdtoId(userDto.getId());
+				AddressTypeDTO adrsTdto=new AddressTypeDTO();
+				adrsTdto.setId(adrs.getAddressType().getId());
+				adrsTdto.setName(adrs.getAddressType().getName());
+				adrsTdto.setDescription(adrs.getAddressType().getDescription());
+				adrsDto.setAtypedto(adrsTdto);
+			}
+			userDto.setAddressdto(listAddressDto);
+			//----userdto to userdtolist
+			listUserDto.add(userDto);
 		}
-		return listudto;
-	}
-// -------------------get specific user details---------------------------------
-	@Override
-	public UserDTO fetchUserById(Integer id) {
-		User user=null;
-		UserDTO dto=new UserDTO();
-		Optional<User> opt=urepo.findById(id);
-		if(opt.isPresent()) {
-			user=opt.get();
-		}
-		if(user!=null)
-			dto=convertUserToDto(user);
-		return dto;
+		return listUserDto;
 	}
 //-------------------delete specific user---------------------------------------
 	@Override
 	public String deleteUser(Integer id) {
-		if(urepo.existsById(id)) {	
-			   urepo.deleteById(id);
+		if(userRepo.existsById(id)) {	
+			   userRepo.deleteById(id);
 			return "User with given id "+id+" removed";
 		}else {
 			return "invalid userid";
@@ -115,109 +132,92 @@ public class UserServiceImpl implements IUserService {
 //-------------------delete specific address---------------------------------------	
 	@Override
 	public String deleteAddress(Integer id) {
-		if(arepo.existsById(id)) {
-			arepo.deleteById(id);
+		if(addressRepo.existsById(id)) {
+			addressRepo.deleteById(id);
 			return "Address with given id "+id+" removed";
 		}else {
 			return "invalid address id";
 		}
 	}
-	//-----------------convert user obj to userdto obj------------------------------------
-	public UserDTO convertUserToDto(User user){
-		
-		//List<UserDTO> listudto=new ArrayList<UserDTO>();
-		//for (User user:listuser) {
-			UserDTO udto=new UserDTO();
-			udto.setId(user.getId());
-			udto.setFname(user.getFname());
-			udto.setLname(user.getLname());
-			udto.setPhone(user.getPhone());
-			udto.setPassword(user.getPassword());
-			udto.setEmail(user.getEmail());
-			// convert and get photo address from byte array of photo content
-			udto.setPhotoadd(Base64.getEncoder().encodeToString(user.getPhoto()));
-		    // set the user type
-			UserTypeDTO uTdto= new UserTypeDTO();
-			uTdto.setId(user.getUtype().getId());
-			uTdto.setName(user.getUtype().getName());
-			uTdto.setDescription(user.getUtype().getDescription());
-			udto.setUdtype(uTdto);
-			//set the address
-			List<AddressDTO> listadto=new ArrayList<AddressDTO>();
-			for(Address add:user.getAddress()) {
-		    	 AddressDTO adto= new AddressDTO();
-		    	 adto.setAddress_id(add.getAddress_id());
-		    	 adto.setAddress(add.getAddress());
-		    	 adto.setCityLocality(add.getCityLocality());
-		    	 adto.setDistrict(add.getDistrict());
-		    	 adto.setState(add.getState());
-		    	 adto.setPin(add.getPin());
-		    	 AddressTypeDTO aTdto = new AddressTypeDTO();
-		    	 aTdto.setId(add.getAtype().getId());
-		    	 aTdto.setName(add.getAtype().getName());
-		    	 aTdto.setDescription(add.getAtype().getDescription());
-		    	 adto.setAtype(aTdto);
-		    	 listadto.add(adto);
-		     }
-		
-			udto.setAddress(listadto);
-		return udto;
-	}
-//-------------------------------update specific user details-----------------------------------
+	//-------------------------------update specific user details-----------------------------------
 	@Override
-	public String updateUser(UserDTO dto) throws Exception {
+	public Integer updateUser(UserDTO userdto) throws Exception {
+		User user1=fetchOneUserById(userdto.getId());
+		user1.setId(userdto.getId());
+		user1.setPhone(userdto.getPhone());
+		user1.setEmail(userdto.getEmail());
+		UserType usertype=null;
+		if(userdto.getUdtype()!=null) {
+			usertype=userTypeRepo.findByName(userdto.getUdtype().getName());
+		}
+		user1.setUserType(usertype);
+		userRepo.save(user1);
+		return user1.getId();
+	}
+	//----------fetch one user---
+	@Override
+	public User fetchOneUserById(Integer id) {
+		Optional<User> opt=userRepo.findById(id);
 		User user=null;
-		Optional<User> opt=urepo.findById(dto.getId());
+		if (opt.isPresent()) {
+			user=opt.get();
+		}
+		return user;
+	}
+	@Override
+	public Integer updateAddress(UserDTO userDto) {
+		Optional<User> opt=userRepo.findById(userDto.getId());
+		User user=null;
 		if(opt.isPresent()) {
 			user=opt.get();
 		}
-		//------------------------copy dto to user------------------------------------------
-		UserType usertype=null;
-		AddressType addtype=null;
-		List<Address> addresslist=new ArrayList<Address>();
-		InputStream is=new FileInputStream(dto.getPhotoadd());
-		byte[] photocontent=new byte[is.available()];
-		is.read(photocontent);
-		//User user= new User();
-		user.setFname(dto.getFname());
-		user.setLname(dto.getLname());
-		user.setEmail(dto.getEmail());
-		user.setPhone(dto.getPhone());
-		user.setPhoto(photocontent);
-		user.setPassword(dto.getPassword());
-		if (dto.getUdtype()!=null) {
-			usertype=utrepo.findByName(dto.getUdtype().getName());
-			user.setUtype(usertype);
+		List<Address> listadress=new ArrayList();
+		for(AddressDTO adrsDto:userDto.getAddressdto()) {
+			Address  addrs =null;
+			if(adrsDto.getId()!=null) {
+				Optional<Address> opt1=addressRepo.findById(adrsDto.getId());
+				if(opt.isPresent()) {
+					addrs=opt1.get();
+					if(addrs!=null && adrsDto.isDelete()) {
+						addressRepo.delete(addrs);
+						continue;
+					} 
+					if(addrs!=null && adrsDto.getAddress()!=null) {
+						addrs.setAddress(adrsDto.getAddress());
+						addrs.setCityLocality(adrsDto.getCityLocality());
+						addrs.setPin(adrsDto.getPin());
+						addrs.setDistrict(adrsDto.getDistrict());
+					}
+				}
+				
 			}
-		//user.setUtype(usertype);
-		//set address for user
-		for (AddressDTO dto1 : dto.getAddress()) {
+			else {
+			addrs=new Address();
+			//copy properties from AddressDTO to Address 
+			//BeanUtils.copyProperties(adrsDto, addrs);
+			addrs.setAddress(adrsDto.getAddress());
+			addrs.setCityLocality(adrsDto.getCityLocality());
+			addrs.setDistrict(adrsDto.getDistrict());
+			addrs.setState(adrsDto.getState());
+			addrs.setPin(adrsDto.getPin());
+			AddressType addtype=null;
+			if(adrsDto.getAtypedto()!=null) {
+				addtype=addressTypeRepo.findByName(adrsDto.getAtypedto().getName());
+			}
+			addrs.setAddressType(addtype);
+			//add Address to AddressList
+			listadress.add(addrs);
 			
-			Address add=new Address();
-			add.setAddress_id(dto1.getAddress_id());
-			add.setAddress(dto1.getAddress());
-			add.setCityLocality(dto1.getCityLocality());
-			add.setDistrict(dto1.getDistrict());
-			add.setState(dto1.getState());
-			add.setPin(dto1.getPin());
-			if(dto1.getAtype()!=null) {
-				addtype=adrepo.findByName(dto1.getAtype().getName());
-				add.setAtype(addtype);
-			}
-			add.setAtype(addtype);
-			addresslist.add(add);
+			}//else
+			
+          // addressRepo.save(addrs);
+			
+		}//for
+		for(Address adrs1:user.getAddressess()) {
+			listadress.add(adrs1);
 		}
-		user.setAddress(addresslist);
-		//----------------------------------------------------------------------------------
-
-	   User user1=urepo.save(user);
-		if(user1!=null) {
-			return "User with id "+user1.getId()+" updated";
-		}else {
-		return "Problem in record updation";
-		}
-		//return null;
+		user.setAddressess(listadress);
+		userRepo.save(user);
+		return user.getId();
 	}
-	
-
 }
